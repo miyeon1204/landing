@@ -9,7 +9,8 @@
         :root {
             --primary: #FF8C00; /* 메인 오렌지 */
             --primary-light: #FFF5EB;
-            --dark: #1D1D1F;
+            --dark: #000000; /* 첫 화면은 다크 */
+            --light-bg: #FFFFFF; /* 기능 소개는 밝은 배경 */
             --grey: #86868B;
             --white: #FFFFFF;
         }
@@ -22,56 +23,72 @@
         }
 
         body {
-            background-color: var(--white);
-            color: var(--dark);
+            background-color: var(--dark);
+            color: var(--white);
             overflow-x: hidden;
             word-break: keep-all;
         }
 
-        /* 포인트 애니메이션 */
+        /* 포인트 애니메이션 (공통) */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 20px 8%;
+        /* --- Hero Section: Train Animation --- */
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* 실제 열차 사진을 바탕으로, 노란색 줄을 CSS 필터로 주황색으로 변경 */
+        .train-image {
+            position: absolute;
+            left: -100%; /* 화면 왼쪽 밖에 위치 */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80vw; /* 열차 크기 조정 */
+            height: auto;
+            z-index: 10;
+            /* ⚠️ 원본 사진의 노란색을 주황색으로 변경하는 CSS 필터 (Hue-rotate) */
+            /* 사진에 따라 수치를 미세 조정해야 할 수 있습니다. 15~30도 정도가 노랑->주황 */
+            filter: hue-rotate(25deg); 
+            animation: trainPass 2s ease-in-out forwards;
+            animation-delay: 0.5s; /* 0.5초 후 출발 */
+        }
+
+        @keyframes trainPass {
+            0% { left: -100%; opacity: 0; }
+            30% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { left: 100%; opacity: 0; } /* 화면 오른쪽으로 완전히 지나감 */
+        }
+
+        /* 열차가 지나간 후 등장하는 콘텐츠 */
+        .hero-content {
+            z-index: 5;
+            opacity: 0; /* 처음엔 숨김 */
+            animation: fadeInAfterTrain 1s ease forwards;
+            animation-delay: 2.2s; /* 열차가 지나가는 시간(2s + 0.5s delay) 이후 */
+        }
+
+        @keyframes fadeInAfterTrain {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .logo {
-            font-size: 1.4rem;
+            font-size: 3rem;
             font-weight: 800;
             color: var(--primary);
-            letter-spacing: -1px;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 180px 8% 100px;
-            text-align: center;
-            background: radial-gradient(circle at top right, #FFF5EB 0%, #FFFFFF 50%);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: var(--primary-light);
-            color: var(--primary);
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            letter-spacing: -2px;
             margin-bottom: 20px;
-            animation: fadeInUp 0.6s ease;
         }
 
         .hero h1 {
@@ -80,7 +97,6 @@
             font-weight: 800;
             margin-bottom: 24px;
             letter-spacing: -2px;
-            animation: fadeInUp 0.8s ease;
         }
 
         .hero h1 span { color: var(--primary); }
@@ -90,32 +106,15 @@
             color: var(--grey);
             max-width: 600px;
             margin: 0 auto 40px;
-            animation: fadeInUp 1s ease;
         }
 
-        .cta-group {
-            animation: fadeInUp 1.2s ease;
+        /* --- Features Section: UI Layout (Bright Mode) --- */
+        .features {
+            padding: 100px 8%;
+            background-color: var(--light-bg);
+            color: var(--dark);
         }
 
-        .btn-main {
-            background: var(--primary);
-            color: white;
-            padding: 18px 36px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-block;
-            box-shadow: 0 10px 20px rgba(255, 140, 0, 0.2);
-        }
-
-        .btn-main:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(255, 140, 0, 0.3);
-        }
-
-        /* Features Section */
         .section-label {
             text-align: center;
             color: var(--primary);
@@ -125,60 +124,67 @@
             font-size: 1.1rem;
         }
 
-        .features {
-            padding: 100px 8%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-top: 50px;
-        }
-
-        .card {
-            background: #FBFBFD;
-            padding: 48px;
-            border-radius: 32px;
-            transition: all 0.4s ease;
-            border: 1px solid transparent;
+        .feature-item {
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            align-items: center;
+            gap: 8%;
+            margin-bottom: 100px; /* 기능 간 간격 */
         }
 
-        .card:hover {
-            background: var(--white);
-            border-color: var(--primary-light);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
-            transform: translateY(-10px);
+        /* 좌우 번갈아 배치 */
+        .feature-item.reverse {
+            flex-direction: row-reverse;
+        }
+
+        /* 텍스트 영역 */
+        .feature-text {
+            flex: 1;
         }
 
         .card-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--white);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
         }
 
-        .card h3 {
-            font-size: 1.6rem;
+        .feature-text h3 {
+            font-size: 2rem;
             margin-bottom: 16px;
-            font-weight: 700;
+            font-weight: 800;
+            color: var(--primary);
         }
 
-        .card p {
+        .feature-text p {
             color: var(--grey);
-            font-size: 1.05rem;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* UI 이미지 영역 */
+        .feature-ui {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 스마트폰 형태 */
+        .mockup {
+            width: 300px; /* 스마트폰 크기 조정 */
+            height: auto;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 8px solid #333; /* 스마트폰 베젤 */
+            position: relative;
+        }
+
+        /* 실제 UI 이미지 이미지 파일 */
+        .mockup img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         /* Footer */
@@ -189,60 +195,70 @@
             color: var(--white);
         }
 
-        footer p { opacity: 0.5; font-size: 0.9rem; }
-
         @media (max-width: 768px) {
-            .hero { padding-top: 140px; }
-            .card { padding: 32px; }
+            .train-image { width: 100vw; } /* 모바일에서는 열차를 더 크게 */
+            .feature-item { flex-direction: column-reverse; gap: 40px; text-align: center; }
+            .feature-item.reverse { flex-direction: column-reverse; }
+            .mockup { width: 250px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">이칸저칸</div>
-        <a href="#" style="text-decoration: none; color: var(--dark); font-weight: 600;">둘러보기</a>
-    </header>
-
     <main>
         <section class="hero">
-            <span class="badge">9기 5조 '썹타는중' 프로젝트</span>
-            <h1>더 나은 지하철 이용,<br><span>이칸저칸</span>이면 충분합니다.</h1>
-            <p>매일 반복되는 지루하고 불편한 지하철 이동,<br>유저들의 실시간 데이터로 가장 쾌적한 '칸'을 찾아드려요.</p>
-            <div class="cta-group">
-                <a href="#" class="btn-main">무료로 시작하기</a>
+            <img src="image_f07307.png" alt="열차" class="train-image">
+
+            <div class="hero-content">
+                <div class="logo">이칸저칸</div>
+                <h1>더 나은 지하철 이용,<br><span>데이터</span>로 찾다.</h1>
+                <p>9기 5조 '썹타는중' 프로젝트</p>
             </div>
         </section>
 
         <section class="features">
-            <span class="section-label">Solution</span>
-            <h2 style="text-align: center; font-size: 2.5rem; font-weight: 800;">불편함은 줄이고 효율은 높이고</h2>
+            <span class="section-label">핵심 솔루션</span>
+            <h2 style="text-align: center; font-size: 2.5rem; font-weight: 800; margin-bottom: 80px;">데이터가 말해주는 최적의 칸</h2>
             
-            <div class="feature-grid">
-                <div class="card">
-                    <div>
-                        <div class="card-icon">❄️</div>
-                        <h3>실시간 칸별 상황</h3>
-                        <p>냉난방, 혼잡도, 위생 상태까지! 에브리타임 비정형 데이터를 자산화하여 지금 내 칸의 정보를 실시간으로 공유합니다.</p>
-                    </div>
+            <div class="feature-item">
+                <div class="feature-text">
+                    <span class="card-icon">❄️</span>
+                    <h3>실시간 칸별 정보</h3>
+                    <p>지금 내가 탄 칸의 냉난방 상태, 혼잡도, 위생 상태는 어떨까요? 에브리타임 비정형 데이터를 실시간으로 자산화하여 칸별 민원 정보를 직관적인 UI로 제공합니다. 이제 가장 쾌적한 칸을 미리 알고 탑승하세요.</p>
                 </div>
-
-                <div class="card">
-                    <div>
-                        <div class="card-icon">⚡</div>
-                        <h3>공식보다 빠른 제보</h3>
-                        <p>지연 상황 발생 시 유저 제보 기반으로 즉시 알림을 드립니다. 심리적 안정은 물론 공식 지연 증명서 연동까지 한 번에 해결하세요.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="card-icon">🏃</div>
-                        <h3>데이터 기반 최적 하차</h3>
-                        <p>목적지 출구와 가장 가까운 칸을 실시간으로 안내합니다. 환승과 하차 시간을 단축해 스마트한 이동 동선을 완성하세요.</p>
+                <div class="feature-ui">
+                    <div class="mockup">
+                        <img src="image_f06b87.png" alt="실시간 칸별 정보 UI">
                     </div>
                 </div>
             </div>
+
+            <div class="feature-item reverse">
+                <div class="feature-text">
+                    <span class="card-icon">⚡</span>
+                    <h3>공식보다 빠른 제보</h3>
+                    <p>갑작스러운 지연 상황, 공식 안내는 항상 한발 늦습니다. 유저들의 실시간 제보를 기반으로 지연 소식을 즉시 알림으로 드립니다. 지연 증명서 연동까지 한 번에 해결하여 출근길 심리적 안정을 찾으세요.</p>
+                </div>
+                <div class="feature-ui">
+                    <div class="mockup">
+                        <img src="image_f06b87.png" alt="빠른 지연 알림 UI">
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-text">
+                    <span class="card-icon">🏃</span>
+                    <h3>데이터 기반 최적 하차</h3>
+                    <p>환승할 때, 혹은 목적지 출구로 나갈 때 어디서 내려야 가장 빠를까요? 지하철 데이터 기반으로 최적의 하차 칸을 실시간으로 안내합니다. 지루한 이동 동선을 최소화하여 시간을 획기적으로 단축하세요.</p>
+                </div>
+                <div class="feature-ui">
+                    <div class="mockup">
+                        <img src="image_f06b87.png" alt="최적 하차 칸 UI">
+                    </div>
+                </div>
+            </div>
+
         </section>
     </main>
 
